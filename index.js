@@ -2,6 +2,8 @@ const taskContainer= document.querySelector(".task__container");
 console.log(taskContainer);
 
 
+const globalStore =  [];
+
 const newCard= ({id,imageUrl, taskTitle, taskType , taskDescription}) => `
 <div class="col-md-6 col-lg-4" id=${id}>
 <div class="card">
@@ -18,7 +20,23 @@ const newCard= ({id,imageUrl, taskTitle, taskType , taskDescription}) => `
   </div>
   <div class="card-footer text-muted ">
     <button type="button" class="btn btn-outline-primary float-end">Open Task</button>
-  </div>`
+  </div>`;
+
+const loadInitialTaskCards = () =>{
+  const getInitialData = localStorage.getItem("tasky");
+  if (!getInitialData) return;
+
+  const {cards} = JSON.parse(getInitialData); 
+
+  cards.map((cardObject) => {
+    const createNewCard = newCard(cardObject);
+    taskContainer.insertAdjacentHTML("beforeend", createNewCard);
+    globalStore.push(cardObject);
+  });
+};
+
+
+
 
 const saveChanges = () => {
     const taskData = {
@@ -33,4 +51,12 @@ const saveChanges = () => {
 
 
     taskContainer.insertAdjacentHTML("beforeend", createNewCard);
+
+    globalStore.push(taskData);
+    
+
+    //application interface programming (localstorage) 
+  localStorage.setItem("tasky" , JSON.stringify({cards: globalStore}));
+
+
 };
