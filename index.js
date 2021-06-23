@@ -1,15 +1,14 @@
 const taskContainer= document.querySelector(".task__container");
 console.log(taskContainer);
 
-
-const globalStore =  [];
+let globalStore =  [];
 
 const newCard= ({id,imageUrl, taskTitle, taskType , taskDescription}) => `
 <div class="col-md-6 col-lg-4" id=${id}>
 <div class="card">
   <div class="card-header d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-outline-success"><i class="fas fa-pencil-alt"></i></button>
-    <button type="button" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+    <button type="button" id=${id} class="btn btn-outline-danger" onclick= "deleteCard.apply(this , arguments)"><i class="fas fa-trash" id=${id} onclick= "deleteCard.apply(this , arguments)"></i></button>
   </div>
   <img src=${imageUrl} class="card-img-top" alt="...">
   <div class="card-body">
@@ -23,7 +22,7 @@ const newCard= ({id,imageUrl, taskTitle, taskType , taskDescription}) => `
   </div>`;
 
 const loadInitialTaskCards = () =>{
-  const getInitialData = localStorage.getItem("tasky");
+  const getInitialData = localStorage.tasky;
   if (!getInitialData) return;
 
   const {cards} = JSON.parse(getInitialData); 
@@ -35,7 +34,8 @@ const loadInitialTaskCards = () =>{
   });
 };
 
-
+const updateLocalStorage= () =>
+localStorage.setItem("tasky", JSON.stringify({ cards: globalStore}));
 
 
 const saveChanges = () => {
@@ -56,7 +56,26 @@ const saveChanges = () => {
     
 
     //application interface programming (localstorage) 
-  localStorage.setItem("tasky" , JSON.stringify({cards: globalStore}));
+  updateLocalStorage();
 
 
+};
+
+const deleteCard= (event) => {
+
+  event= window.event;
+  const targetID = event.target.id;
+  const tagName = event.target.tagName;
+  console.log(targetID)
+
+  globalStore = globalStore.filter((cardObject)=> cardObject.id !== targetID);
+  updateLocalStorage();
+
+  if(tagName === "BUTTON"){
+    return taskContainer.removeChild(
+    event.target.parentNode.parentNode.parentNode);
+  }
+
+   return taskContainer.removeChild(
+    event.target.parentNode.parentNode.parentNode.parentNode);
 };
