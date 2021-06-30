@@ -19,7 +19,7 @@ const newCard= ({id,imageUrl, taskTitle, taskType , taskDescription}) => `
 
   </div>
   <div class="card-footer text-muted ">
-    <button type="button" class="btn btn-outline-primary float-end">Open Task</button>
+    <button type="button" id=${id} class="btn btn-outline-primary float-end">Open Task</button>
   </div>`;
 
 const loadInitialTaskCards = () =>{
@@ -41,7 +41,7 @@ localStorage.setItem("tasky", JSON.stringify({ cards: globalStore}));
 
 const saveChanges = () => {
     const taskData = {
-        id: `${Date.now()}` ,
+        id:`${Date.now()}`,
         imageUrl: document.getElementById("imageurl").value,
         taskTitle: document.getElementById("tasktitle").value,
         taskType: document.getElementById("tasktype").value,
@@ -130,5 +130,24 @@ const saveEditChanges= (event) =>{
     taskType:taskType.innerHTML,
     taskDescription:taskDescription.innerHTML,
   };
-  console.log({updatedData});
+  
+  globalStore= globalStore.map((task) => {
+    if(task.id === targetID) {
+     return{
+      id:task.id,
+      imageUrl: task.imageUrl,
+      taskTitle: updatedData.taskTitle,
+      taskType: updatedData.taskType,
+      taskDescription: updatedData.taskDescription,
+     };
+    }
+    return;
+  });
+  updateLocalStorage();
+
+  taskTitle.setAttribute("contenteditable", "false");
+  taskDescription.setAttribute("contenteditable", "false");
+  taskType.setAttribute("contenteditable", "false");
+  submitButton.removeAttribute("onclick")
+  submitButton.innerHTML= "Open Task";
 };
